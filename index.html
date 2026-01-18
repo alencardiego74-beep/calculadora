@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora de Notas</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box {
+  background: #fff;
+  width: 330px;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.calcular {
+  background: #2a5298;
+  color: #fff;
+}
+
+.limpar {
+  background: #aaa;
+  color: #000;
+}
+
+.resultado {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.aprovado {
+  background: #d4edda;
+  color: #155724;
+}
+
+.provao {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.reprovado {
+  background: #f8d7da;
+  color: #721c24;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Calculadora de Notas</h2>
+
+  <input id="n1" type="number" placeholder="Unidade 1 (0 a 10)">
+  <input id="n2" type="number" placeholder="Unidade 2 (0 a 10)">
+  <input id="n3" type="number" placeholder="Unidade 3 (0 a 10)">
+  <input id="n4" type="number" placeholder="Unidade 4 (0 a 10)">
+
+  <button class="calcular" onclick="calcular()">Calcular</button>
+  <button class="limpar" onclick="limpar()">Limpar</button>
+
+  <div id="res" class="resultado"></div>
+</div>
+
+<script>
+function calcular() {
+  var n1 = Number(n1Input.value);
+  var n2 = Number(n2Input.value);
+  var n3 = Number(n3Input.value);
+  var n4 = Number(n4Input.value);
+
+  if (
+    n1 < 0 || n1 > 10 ||
+    n2 < 0 || n2 > 10 ||
+    n3 < 0 || n3 > 10 ||
+    n4 < 0 || n4 > 10
+  ) {
+    res.className = "resultado reprovado";
+    res.innerHTML = "❌ As notas devem ser entre 0 e 10";
+    return;
+  }
+
+  var somaSemPeso = n1 + n2 + n3 + n4;
+  var somaPonderada = (n1*1) + (n2*2) + (n3*3) + (n4*4);
+  var mu = somaPonderada / 10;
+
+  if (somaPonderada >= 60) {
+    res.className = "resultado aprovado";
+    res.innerHTML =
+      "✅ APROVADO<br>" +
+      "MU: " + mu.toFixed(2) + "<br>" +
+      "Soma ponderada: " + somaPonderada;
+  }
+  else if (somaSemPeso < 18) {
+    res.className = "resultado reprovado";
+    res.innerHTML =
+      "❌ REPROVADO<br>" +
+      "Sem direito ao provão<br>" +
+      "Soma sem peso: " + somaSemPeso;
+  }
+  else {
+    var prova = (50 - (mu * 6)) / 4;
+    res.className = "resultado provao";
+    res.innerHTML =
+      "⚠️ PROVÃO<br>" +
+      "MU: " + mu.toFixed(2) + "<br>" +
+      "Precisa tirar: " + prova.toFixed(2);
+  }
+}
+
+function limpar() {
+  n1.value = "";
+  n2.value = "";
+  n3.value = "";
+  n4.value = "";
+  res.innerHTML = "";
+  res.className = "resultado";
+}
+
+/* atalhos */
+var n1Input = document.getElementById("n1");
+var n2Input = document.getElementById("n2");
+var n3Input = document.getElementById("n3");
+var n4Input = document.getElementById("n4");
+var res = document.getElementById("res");
+</script>
+
+</body>
+</html>
