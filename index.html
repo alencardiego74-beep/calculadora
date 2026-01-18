@@ -30,10 +30,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text);
   padding: 16px;
 }
 
+/* CARD */
 .card {
   background: var(--card);
   width: 100%;
@@ -43,41 +43,27 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-h1 {
-  margin: 0 0 6px;
-  font-size: 22px;
+/* TELA NOME */
+#tela-nome h1 {
   text-align: center;
+  font-size: 22px;
 }
 
-.subtitle {
+#tela-nome p {
   text-align: center;
   color: var(--muted);
   font-size: 14px;
-  margin-bottom: 18px;
-}
-
-/* INPUTS */
-.inputs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
 }
 
 input {
   width: 100%;
-  max-width: 100%;
   padding: 14px;
+  margin-top: 12px;
   font-size: 16px;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
 }
 
-input:focus {
-  outline: none;
-  border-color: var(--primary);
-}
-
-/* BOTÕES */
 button {
   width: 100%;
   margin-top: 14px;
@@ -98,7 +84,13 @@ button {
   color: #111;
 }
 
-/* RESULTADO */
+/* CALCULADORA */
+.inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 .result {
   margin-top: 18px;
   padding: 14px;
@@ -106,20 +98,9 @@ button {
   font-size: 15px;
 }
 
-.success {
-  background: #dcfce7;
-  color: var(--success);
-}
-
-.warning {
-  background: #fef9c3;
-  color: var(--warning);
-}
-
-.danger {
-  background: #fee2e2;
-  color: var(--danger);
-}
+.success { background: #dcfce7; color: var(--success); }
+.warning { background: #fef9c3; color: var(--warning); }
+.danger  { background: #fee2e2; color: var(--danger); }
 
 .footer {
   margin-top: 14px;
@@ -128,23 +109,10 @@ button {
   color: var(--muted);
 }
 
-/* 📱 MOBILE */
+/* MOBILE */
 @media (max-width: 480px) {
   .inputs {
     grid-template-columns: 1fr;
-  }
-
-  h1 {
-    font-size: 20px;
-  }
-
-  .card {
-    padding: 20px;
-  }
-
-  input {
-    padding-left: 12px;
-    padding-right: 12px;
   }
 }
 </style>
@@ -152,9 +120,18 @@ button {
 
 <body>
 
-<div class="card">
-  <h1>Calculadora de Notas</h1>
-  <div class="subtitle">Sistema de média ponderada</div>
+<!-- TELA NOME -->
+<div class="card" id="tela-nome">
+  <h1>Olá 👋</h1>
+  <p>Como é seu nome?</p>
+  <input id="nome" type="text" placeholder="Digite seu nome">
+  <button class="btn-primary" onclick="entrar()">Continuar</button>
+</div>
+
+<!-- CALCULADORA -->
+<div class="card" id="tela-calculo" style="display:none;">
+  <h1 id="saudacao"></h1>
+  <p class="footer">Sistema de média ponderada</p>
 
   <div class="inputs">
     <input id="n1" type="number" placeholder="Unidade 1 (0–10)">
@@ -167,26 +144,31 @@ button {
   <button class="btn-secondary" onclick="limpar()">Limpar</button>
 
   <div id="res"></div>
-
-  <div class="footer">Notas válidas de 0 a 10</div>
 </div>
 
 <script>
+function entrar() {
+  const nome = document.getElementById("nome").value.trim();
+  if (nome === "") {
+    alert("Digite seu nome 🙂");
+    return;
+  }
+
+  document.getElementById("tela-nome").style.display = "none";
+  document.getElementById("tela-calculo").style.display = "block";
+  document.getElementById("saudacao").innerText = "Olá, " + nome + " 👋";
+}
+
 function calcular() {
-  const n1 = Number(document.getElementById("n1").value);
-  const n2 = Number(document.getElementById("n2").value);
-  const n3 = Number(document.getElementById("n3").value);
-  const n4 = Number(document.getElementById("n4").value);
+  const n1 = Number(n1.value);
+  const n2 = Number(n2.value);
+  const n3 = Number(n3.value);
+  const n4 = Number(n4.value);
   const res = document.getElementById("res");
 
-  if (
-    n1 < 0 || n1 > 10 ||
-    n2 < 0 || n2 > 10 ||
-    n3 < 0 || n3 > 10 ||
-    n4 < 0 || n4 > 10
-  ) {
+  if ([n1,n2,n3,n4].some(n => n < 0 || n > 10)) {
     res.className = "result danger";
-    res.innerHTML = "❌ Notas inválidas. Use valores entre 0 e 10.";
+    res.innerHTML = "Notas inválidas. Use valores entre 0 e 10.";
     return;
   }
 
@@ -196,33 +178,19 @@ function calcular() {
 
   if (somaPonderada >= 60) {
     res.className = "result success";
-    res.innerHTML = `
-      <strong>Aprovado</strong><br>
-      Média (MU): ${mu.toFixed(2)}
-    `;
-  }
-  else if (somaSemPeso < 18) {
+    res.innerHTML = `Aprovado ✅<br>Média (MU): ${mu.toFixed(2)}`;
+  } else if (somaSemPeso < 18) {
     res.className = "result danger";
-    res.innerHTML = `
-      <strong>Reprovado</strong><br>
-      Sem direito ao provão
-    `;
-  }
-  else {
+    res.innerHTML = "Reprovado ❌<br>Sem direito ao provão";
+  } else {
     const prova = (50 - (mu * 6)) / 4;
     res.className = "result warning";
-    res.innerHTML = `
-      <strong>Provão</strong><br>
-      Média (MU): ${mu.toFixed(2)}<br>
-      Nota necessária: ${prova.toFixed(2)}
-    `;
+    res.innerHTML = `Provão ⚠️<br>Precisa tirar: ${prova.toFixed(2)}`;
   }
 }
 
 function limpar() {
-  ["n1","n2","n3","n4"].forEach(id => {
-    document.getElementById(id).value = "";
-  });
+  ["n1","n2","n3","n4"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("res").innerHTML = "";
 }
 </script>
