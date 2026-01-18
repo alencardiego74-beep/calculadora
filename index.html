@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Notas</title>
 
+<!-- AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3295770328856595"
+     crossorigin="anonymous"></script>
+
 <style>
 * {
   box-sizing: border-box;
@@ -78,6 +82,12 @@ button:hover {
 .danger  { background: #fee2e2; color: #991b1b; }
 
 .hidden { display: none; }
+
+/* AdSense responsivo */
+.adsbygoogle {
+  display:block;
+  margin: 20px auto;
+}
 </style>
 </head>
 
@@ -112,6 +122,17 @@ button:hover {
     <button onclick="calcular()">Calcular</button>
 
     <div id="res"></div>
+
+    <!-- AdSense bloco abaixo do resultado -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-3295770328856595"
+         data-ad-slot="1234567890"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
   </div>
 
 </div>
@@ -131,15 +152,24 @@ function continuar() {
   document.getElementById("titulo").innerText = `Olá, ${nome}!`;
 }
 
-function salvarPlanilha(nome, situacao, media) {
+function enviarDados(nome, media, situacao) {
   fetch("https://script.google.com/macros/s/AKfycbyLIq9A68fsOf3ih7_fGmb3x13no4mCfX9aHIgBT2WYWEQqWMGyG8Hj-epTNalp9pB2Kw/exec", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       nome: nome,
-      situacao: situacao,
-      media: media
+      media: media,
+      situacao: situacao
     })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Resposta do servidor:", data);
+  })
+  .catch(error => {
+    console.error("Erro ao enviar:", error);
   });
 }
 
@@ -159,27 +189,29 @@ function calcular() {
   const somaSemPeso = n1 + n2 + n3 + n4;
   const somaPonderada = (n1*1) + (n2*2) + (n3*3) + (n4*4);
   const mu = somaPonderada / 10;
+  let situacaoAluno = "";
 
   if (somaPonderada >= 60) {
+    situacaoAluno = "Aprovado";
     res.className = "result success";
     res.innerHTML = `Aprovado ✅<br>Média (MU): ${mu.toFixed(2)}`;
-    salvarPlanilha(nomeAluno, "Aprovado", mu.toFixed(2));
   }
   else if (somaSemPeso < 18) {
+    situacaoAluno = "Reprovado";
     res.className = "result danger";
     res.innerHTML = "Reprovado ❌<br>Sem direito ao provão";
-    salvarPlanilha(nomeAluno, "Reprovado", mu.toFixed(2));
   }
   else {
     const prova = (50 - (mu * 6)) / 4;
+    situacaoAluno = "Provão";
     res.className = "result warning";
     res.innerHTML = `Provão ⚠️<br>Precisa tirar: ${prova.toFixed(2)}`;
-    salvarPlanilha(nomeAluno, "Provão", prova.toFixed(2));
   }
+
+  // Envia para a planilha
+  enviarDados(nomeAluno, mu.toFixed(2), situacaoAluno);
 }
 </script>
 
 </body>
 </html>
-
-
