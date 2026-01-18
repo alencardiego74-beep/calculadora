@@ -3,103 +3,181 @@
 <head>
 <meta charset="UTF-8">
 <title>Calculadora de Notas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+:root {
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --primary: #2563eb;
+  --success: #16a34a;
+  --warning: #ca8a04;
+  --danger: #dc2626;
+  --text: #111827;
+  --muted: #6b7280;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
-  height: 100vh;
+  margin: 0;
+  background: var(--bg);
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  color: var(--text);
+  padding: 16px;
 }
 
-.box {
-  background: #fff;
-  width: 330px;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+.card {
+  background: var(--card);
+  width: 100%;
+  max-width: 420px;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-h2 {
+h1 {
+  margin: 0 0 6px;
+  font-size: 22px;
   text-align: center;
-  margin-bottom: 15px;
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+
+/* INPUTS */
+.inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 input {
   width: 100%;
-  padding: 8px;
-  margin-top: 8px;
-  font-size: 14px;
+  max-width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
 }
 
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* BOTÕES */
 button {
   width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  font-size: 15px;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
-  border-radius: 6px;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.calcular {
-  background: #2a5298;
-  color: #fff;
+.btn-primary {
+  background: var(--primary);
+  color: white;
 }
 
-.limpar {
-  background: #aaa;
-  color: #000;
+.btn-secondary {
+  background: #e5e7eb;
+  color: #111;
 }
 
-.resultado {
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
+/* RESULTADO */
+.result {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 15px;
 }
 
-.aprovado {
-  background: #d4edda;
-  color: #155724;
+.success {
+  background: #dcfce7;
+  color: var(--success);
 }
 
-.provao {
-  background: #fff3cd;
-  color: #856404;
+.warning {
+  background: #fef9c3;
+  color: var(--warning);
 }
 
-.reprovado {
-  background: #f8d7da;
-  color: #721c24;
+.danger {
+  background: #fee2e2;
+  color: var(--danger);
+}
+
+.footer {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* 📱 MOBILE */
+@media (max-width: 480px) {
+  .inputs {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  input {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
-  <h2>Calculadora de Notas</h2>
+<div class="card">
+  <h1>Calculadora de Notas</h1>
+  <div class="subtitle">Sistema de média ponderada</div>
 
-  <input id="n1" type="number" placeholder="Unidade 1 (0 a 10)">
-  <input id="n2" type="number" placeholder="Unidade 2 (0 a 10)">
-  <input id="n3" type="number" placeholder="Unidade 3 (0 a 10)">
-  <input id="n4" type="number" placeholder="Unidade 4 (0 a 10)">
+  <div class="inputs">
+    <input id="n1" type="number" placeholder="Unidade 1 (0–10)">
+    <input id="n2" type="number" placeholder="Unidade 2 (0–10)">
+    <input id="n3" type="number" placeholder="Unidade 3 (0–10)">
+    <input id="n4" type="number" placeholder="Unidade 4 (0–10)">
+  </div>
 
-  <button class="calcular" onclick="calcular()">Calcular</button>
-  <button class="limpar" onclick="limpar()">Limpar</button>
+  <button class="btn-primary" onclick="calcular()">Calcular</button>
+  <button class="btn-secondary" onclick="limpar()">Limpar</button>
 
-  <div id="res" class="resultado"></div>
+  <div id="res"></div>
+
+  <div class="footer">Notas válidas de 0 a 10</div>
 </div>
 
 <script>
 function calcular() {
-  var n1 = Number(n1Input.value);
-  var n2 = Number(n2Input.value);
-  var n3 = Number(n3Input.value);
-  var n4 = Number(n4Input.value);
+  const n1 = Number(document.getElementById("n1").value);
+  const n2 = Number(document.getElementById("n2").value);
+  const n3 = Number(document.getElementById("n3").value);
+  const n4 = Number(document.getElementById("n4").value);
+  const res = document.getElementById("res");
 
   if (
     n1 < 0 || n1 > 10 ||
@@ -107,54 +185,46 @@ function calcular() {
     n3 < 0 || n3 > 10 ||
     n4 < 0 || n4 > 10
   ) {
-    res.className = "resultado reprovado";
-    res.innerHTML = "❌ As notas devem ser entre 0 e 10";
+    res.className = "result danger";
+    res.innerHTML = "❌ Notas inválidas. Use valores entre 0 e 10.";
     return;
   }
 
-  var somaSemPeso = n1 + n2 + n3 + n4;
-  var somaPonderada = (n1*1) + (n2*2) + (n3*3) + (n4*4);
-  var mu = somaPonderada / 10;
+  const somaSemPeso = n1 + n2 + n3 + n4;
+  const somaPonderada = (n1*1) + (n2*2) + (n3*3) + (n4*4);
+  const mu = somaPonderada / 10;
 
   if (somaPonderada >= 60) {
-    res.className = "resultado aprovado";
-    res.innerHTML =
-      "✅ APROVADO<br>" +
-      "MU: " + mu.toFixed(2) + "<br>" +
-      "Soma ponderada: " + somaPonderada;
+    res.className = "result success";
+    res.innerHTML = `
+      <strong>Aprovado</strong><br>
+      Média (MU): ${mu.toFixed(2)}
+    `;
   }
   else if (somaSemPeso < 18) {
-    res.className = "resultado reprovado";
-    res.innerHTML =
-      "❌ REPROVADO<br>" +
-      "Sem direito ao provão<br>" +
-      "Soma sem peso: " + somaSemPeso;
+    res.className = "result danger";
+    res.innerHTML = `
+      <strong>Reprovado</strong><br>
+      Sem direito ao provão
+    `;
   }
   else {
-    var prova = (50 - (mu * 6)) / 4;
-    res.className = "resultado provao";
-    res.innerHTML =
-      "⚠️ PROVÃO<br>" +
-      "MU: " + mu.toFixed(2) + "<br>" +
-      "Precisa tirar: " + prova.toFixed(2);
+    const prova = (50 - (mu * 6)) / 4;
+    res.className = "result warning";
+    res.innerHTML = `
+      <strong>Provão</strong><br>
+      Média (MU): ${mu.toFixed(2)}<br>
+      Nota necessária: ${prova.toFixed(2)}
+    `;
   }
 }
 
 function limpar() {
-  n1.value = "";
-  n2.value = "";
-  n3.value = "";
-  n4.value = "";
-  res.innerHTML = "";
-  res.className = "resultado";
+  ["n1","n2","n3","n4"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("res").innerHTML = "";
 }
-
-/* atalhos */
-var n1Input = document.getElementById("n1");
-var n2Input = document.getElementById("n2");
-var n3Input = document.getElementById("n3");
-var n4Input = document.getElementById("n4");
-var res = document.getElementById("res");
 </script>
 
 </body>
